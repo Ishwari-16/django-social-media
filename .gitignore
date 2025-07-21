@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+_pycache_/
+*.py[cod]
+*$py.class
+
+# Django migrations (optional to ignore)
+*/migrations/.py
+!/migrations/_init_.py
+
+# Python virtual environments
+env/
+venv/
+ENV/
+
+# Logs
+*.log
+
+# SQLite database (ignore in development)
+*.sqlite3
+
+# Static and media files
+static/
+media/
+
+# VS Code settings
+.vscode/
+
+# macOS and Windows system files
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MyPy cache
+.mypy_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local settings (if any)
+local_settings.py
+
+# Gunicorn and Celery
+*.pid
+celerybeat-schedule
