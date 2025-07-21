@@ -15,6 +15,9 @@
       {% endif %}
 
       <hr>
-      {%  block body %} {% endblock %}
+      
+      {%  block body %} 
+            {% block content %}{% endblock %}
+      {% endblock %}
 </body>
 </html>
