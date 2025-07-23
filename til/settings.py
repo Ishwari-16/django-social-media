@@ -157,8 +157,8 @@ AUTHENTICATION_BACKENDS =(
 )
 
 STATICFILES_DIRS =[
-    os.path.join(PROJECT_DIR, "frontend/")
+    os.path.join(BASE_DIR, "til","static")
 ]
-STATIC_ROOT = os.path.join(BASE_DIR,"static")
+STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
 
 STATIC_URL = "/static/"
