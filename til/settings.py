@@ -155,5 +155,10 @@ AUTHENTICATION_BACKENDS =(
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
-#ACCOUNT_LOGOUT_REDIRECT_URL = '/'
-#ACCOUNT_SIGNUP_REDIRECT_URL = '/'
+
+STATICFILES_DIRS =[
+    os.path.join(PROJECT_DIR, "frontend/")
+]
+STATIC_ROOT = os.path.join(BASE_DIR,"static")
+
+STATIC_URL = "/static/"
