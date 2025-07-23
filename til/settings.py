@@ -157,7 +157,7 @@ AUTHENTICATION_BACKENDS =(
 )
 
 STATICFILES_DIRS =[
-    os.path.join(BASE_DIR, "til","static")
+    os.path.join(BASE_DIR, "static")
 ]
 STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
 
