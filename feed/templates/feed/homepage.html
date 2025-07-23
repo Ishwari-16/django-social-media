@@ -4,6 +4,6 @@
 {% block title %}Changed the of the homepage {% endblock %}
 
 {% block body %} {% for post in posts %}
-        {% include "includes/post.html" with post=post show_detail_link = True %}
+        {% include "includes/post.html" with post=post show_detail_link=True %}
       {% endfor %}
 {% endblock %}
