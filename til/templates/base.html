@@ -8,15 +8,12 @@
   <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" />
 </head>
 <body>
-
   <div class="min-h-screen flex flex-row bg-gray-100">
     <!-- Sidebar -->
     <div class="flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
-      <!-- Header/Logo -->
       <div class="flex items-center justify-center h-20 shadow-md">
         <h1 class="text-3xl uppercase text-indigo-500">TIL</h1>
       </div>
-
       <!-- Navigation -->
       <ul class="flex flex-col py-4">
         <li>
@@ -26,6 +23,12 @@
           </a>
         </li>
         {% if request.user.is_authenticated %}
+        <li>
+          <a href="{% url 'feed:new_post' %}" class="flex items-center h-12 px-4 text-gray-500 hover:text-gray-800 hover:translate-x-2 transition-transform duration-200">
+            <span class="w-12 text-lg text-gray-400"><i class='bx bx-layer-plus'></i></span>
+            <span class="text-sm font-medium">New post</span>
+          </a>
+        </li>
         <li>
           <a href="{% url 'account_logout' %}" class="flex items-center h-12 px-4 text-gray-500 hover:text-gray-800 hover:translate-x-2 transition-transform duration-200">
             <span class="w-12 text-lg text-gray-400"><i class='bx bx-log-out'></i></span>
