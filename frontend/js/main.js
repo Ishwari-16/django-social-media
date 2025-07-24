@@ -60,3 +60,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
         }
     });
 })
+.on("click", ".js-follow", function(e){
+    e.preventDefault();
+    console.log("Clicked")
+})
