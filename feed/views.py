@@ -26,7 +26,7 @@ class CreateNewPost(LoginRequiredMixin,CreateView):
       fields=['text']
       success_url = "/"
 
-      def dispatch (self, request, *args, **kwargs):
+      def dispatch(self, request, *args, **kwargs):
             self.request=request
             return super().dispatch(request, *args, **kwargs)
 
@@ -37,13 +37,13 @@ class CreateNewPost(LoginRequiredMixin,CreateView):
             return super().form_valid(form) 
 
 
-      def post (self,request,*args,**kwargs):
+      def post(self,request,*args,**kwargs):
             print("THIS IS A POST REQUEST")
             post=Post.objects.create(
                   text = request.POST.get("text"),
                   author=request.user,
             )
-            return "A thing in here"
+
             return render(
                   request,
                   "includes/post.html",
