@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView
 
 
-class ProfileDetailNew(DetailView):
+class ProfileDetailView(DetailView):
       http_method_names=["get"]
       template_name="profiles/detail.html"
       model=User
