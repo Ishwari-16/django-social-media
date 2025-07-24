@@ -39,7 +39,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
 const $btn = $(this)
 const text=$(".js-post-text").val().trim()
 if(!text.length){
-    return false 
+   // return false 
 }
 
 $btn.prop("disabled", true).text("Posting!")
