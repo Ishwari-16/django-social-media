@@ -38,7 +38,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
         const $btn = $(this)
 
         if(!text.length){
-            return false 
+            return false; 
         }
 
         $btn.prop("disabled", true).text("Posting!")

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from django.views.generic import DetailView
-
+from django.views.generic import DetailView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from feed.models import Post
 
 class ProfileDetailView(DetailView):
@@ -18,3 +18,8 @@ class ProfileDetailView(DetailView):
             return context
 
             #context['total_followers']=
+
+
+class FollowView(LoginRequiredMixin, View):
+
+      pass
