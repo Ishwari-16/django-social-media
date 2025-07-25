@@ -2,9 +2,10 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
-from feed.models import Post
 
+from feed.models import Post
 from followers.models import Follower
+
 
 class ProfileDetailView(DetailView):
       http_method_names=["get"]
@@ -15,12 +16,12 @@ class ProfileDetailView(DetailView):
       slug_url_kwarg="username"
 
       def get_context_data(self,**kwargs):
-            context=super().get_context_data(**kwargs)
             user=self.get_object()
+            context=super().get_context_data(**kwargs)
             context['total_posts']=Post.objects.filter(author=user).count()
+            #context['total_followers']=
             return context
 
-            #context['total_followers']=
 
 class FollowView(LoginRequiredMixin, View):
       http_method_names=["post"]
@@ -34,7 +35,7 @@ class FollowView(LoginRequiredMixin, View):
             try:
                   other_user=User.objects.get(username=data['username'])
             except User.DeesNotExist:
-                  return HttpResponseBadRequest:("Missing user")
+                  return HttpResponseBadRequest("Missing user")
 
                   if data['action'] == "follow":
                         #Follow
@@ -63,6 +64,6 @@ class FollowView(LoginRequiredMixin, View):
 
       def post(self,request,*args,**kwargs):
             return JsonResponse({
-                  data=request.POST.dict()
-                  'done':True
+                  data == request.POST.dict(),
+                  'done'==True
             })

@@ -62,20 +62,29 @@ $(document).on("click", ".js-toggle-modal", function(e){
 })
 .on("click", ".js-follow", function(e){
     e.preventDefault();
-
+    const action = $(this).attr("data-action")
     $.ajax({
             type:'POST',
-            url:$(this).dat("url"),
+            url:$(this).data("url"),
             data:{
-                action: $(this).attr("data-action"),
-                username: $(this).dat("username"),
+                action:action,
+                username: $(this).data("username"),
             },
-        success:(data) => {
+            success:(data) => {
+                $(".js-follow-text").text(data.wording)
+                if(action == "follow") {
+                    //Change wording to unfollow
+                    console.log("DEBUG", "unfollow")
+                    $(this).attr("data-action", "unfollow")
+                }else {
+                    // The opposite
+                    console.log("DEBUG", "follow")
+                    $(this).attr("data-action", "unfollow")
+                }
+            },
+            error:(error) => {
+                console.warn(error)
             
-        },
-        error:(error) => {
-            console.warn(error)
-            
-        }
+            }
     });
 })
