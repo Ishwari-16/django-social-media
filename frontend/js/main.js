@@ -62,5 +62,20 @@ $(document).on("click", ".js-toggle-modal", function(e){
 })
 .on("click", ".js-follow", function(e){
     e.preventDefault();
-    console.log("Clicked")
+
+    $.ajax({
+            type:'POST',
+            url:$(this).dat("url"),
+            data:{
+                action: $(this).attr("data-action"),
+                username: $(this).dat("username"),
+            },
+        success:(data) => {
+            
+        },
+        error:(error) => {
+            console.warn(error)
+            
+        }
+    });
 })
