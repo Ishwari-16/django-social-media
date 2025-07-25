@@ -14,12 +14,12 @@
     <!-- Sidebar -->
     <div class="flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
       <div class="flex items-center justify-center h-20 shadow-md">
-        <h1 class="text-3xl uppercase text-indigo-500">TIL</h1>
+        <h1 class="text-3xl uppercase text-indigo-600 font-bold">TIL</h1>
       </div>
       <!-- Navigation -->
-      <ul class="flex flex-col py-4">
+      <ul class="flex flex-col py-4 space-y-1">
         <li>
-          <a href="/" class="flex items-center h-12 px-4 text-gray-500 hover:text-gray-800 hover:translate-x-2 transition-transform duration-200">
+          <a href="/" class="flex items-center h-12 px-4 text-gray-600 hover:text-gray-800 hover:translate-x-2 transition-transform duration-200">
             <span class="w-12 text-lg text-gray-400"><i class='bx bx-home w-12'></i></span>
             <span class="text-sm font-medium">Home</span>
           </a>
@@ -27,8 +27,8 @@
         {% if request.user.is_authenticated %}
         <li>
           <a href="{% url 'feed:new_post' %}" class="flex items-center h-12 px-4 text-gray-500 hover:text-gray-800 hover:translate-x-2 transition-transform duration-200 js-toggle-modal">
-            <span class="w-12 text-lg text-gray-400"><i class='bx bx-layer-plus'></i></span>
-            <span class="text-sm font-medium">New post</span>
+            <span class="w-12 text-lg text-gray-400"><i class='bx bx-layer-plus w-6'></i></span>
+            <span class="ml-2 text-sm font-medium">New post</span>
           </a>
         </li>
         <li>
@@ -48,7 +48,7 @@
       </ul>
     </div>
 <!-- Main Content -->
-    <div class="p-16">
+    <div class="p-16 w-full">
       {% block body %}
             {% block content %}{% endblock %}
       {% endblock %}
@@ -61,7 +61,7 @@
     <div class="flex flex-col items-start p-4">
       <div class="flex items-center w-full">
         <div class="text-gray-900 font-medium text-lg">New Post</div>
-		<svg class="ml-auto fill-current text-gray-700 w-6 h-6 cursor-pointer js-toggle-modal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+		<svg class="ml-auto fill-current text-gray-700 w-6 h-6 cursor-pointer js-toggle-modal" xmlns="http://ww.w3.org/2000/svg" viewBox="0 0 18 18">
 			<path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
      	</svg>
       </div>
@@ -71,8 +71,8 @@
       </div>
       <hr>
       <div class="ml-auto">
-        <button class="bg-white text-gray-800 font-bold rounded border-b-2 border-green-500hover:border-green-600 hover:bg-green-500 hover:text-white shadow-md py-2 px-6 inline-flex items-center"type="submit" >
-                 <span class="mr-2">Create Post </span>
+        <button class="js-submit bg-white text-gray-800 font-bold rounded border-b-2 border-green-500 hover:border-green-600 hover:bg-green-500 hover:text-white shadow-md py-2 px-6 inline-flex items-center" type="submit">
+                 <span class="mr-2">New Post </span>
                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="currentcolor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
                  </svg>
