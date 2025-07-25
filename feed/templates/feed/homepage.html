@@ -3,9 +3,12 @@
 {% block title %}Changed the of the homepage {% endblock %}
 
 {% block body %} 
-      <div id="posts-container"> 
-        {% for post in posts %}
-            {% include "includes/post.html" with post=post show_detail_link=True %}
-        {% endfor %}
-      </div> 
+  <div id="posts-container"> 
+    {% for post in posts %}
+      {% include "include/post.html" with post=post show_detail_link=True %}
+    {% endfor %}
+    {% empty %}
+      <p>No posts yet.</p>
+    {% endfor %}
+  </div> 
 {% endblock %}
