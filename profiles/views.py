@@ -5,7 +5,13 @@ from django.http import JsonResponse, HttpResponseBadRequest
 
 from feed.models import Post
 from followers.models import Follower
+from django.shortcuts import render, redirect
+from .forms import ProfileUpdateForm, UserUpdateForm, PasswordChangeForm
 
+@login_required
+def edit_profile(request):
+    # your update logic goes here
+    return render(request, 'profiles/edit_profile.html')
 
 class ProfileDetailView(DetailView):
       http_method_names=["get"]
