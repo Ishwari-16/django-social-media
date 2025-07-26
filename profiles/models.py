@@ -6,8 +6,10 @@ from sorl.thumbnail import ImageField  # Optional – used for thumbnailing
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='profile_images/', default='default.jpg')
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
+    def __str__(self):
+        return f'{self.user.username} Profile'
 
 #class Profile(models.Model):
 #    user = models.OneToOneField(
@@ -23,9 +25,6 @@ class Profile(models.Model):
 
     # Remove this if you're already using `profile_image` as the main field
     # image = ImageField(upload_to='profiles')  ← Not needed
-
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
 
 # Automatically create a profile when new user is created
 @receiver(post_save, sender=User)

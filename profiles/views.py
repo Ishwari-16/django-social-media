@@ -5,33 +5,86 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserChangeForm  # ✅ Use built-in form
-
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from feed.models import Post
 from followers.models import Follower
-
-class EditProfileImageView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, "profiles/edit_image.html")
-
-    def post(self, request):
-        # handle image upload logic here
-        return redirect("profiles:edit_image")
+from .models import Profile  # 👈 Make sure you have Profile model with image field
+from .forms import EditProfileForm  # 👈 Custom form created to handle everything
 
 # ✅ Homepage View — show all users
 def homepage(request):
     users = User.objects.all()
     return render(request, "profiles/home.html", {"users": users})
 
-# ✅ Edit Profile View — no custom form needed
-class EditProfileView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = UserChangeForm  # ✅ Using built-in form instead of missing EditProfileForm
-    template_name = 'profiles/edit_profile.html'
-    success_url = reverse_lazy('profiles:home')
+class EditProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, "profiles/edit_profile.html", {"user": request.user})
 
-    def get_object(self):
-        return self.request.user
+    def post(self, request):
+        user = request.user
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        image = request.FILES.get("image")
+
+        # Update user fields
+        user.first_name = first_name
+        user.last_name = last_name
+        user.username = username
+
+        if password:
+            user.set_password(password)
+
+        user.save()
+
+        # Update profile image (if exists)
+        if hasattr(user, 'profile'):
+            if image:
+                user.profile.image = image
+                user.profile.save()
+
+        messages.success(request, "Profile updated successfully.")
+        return redirect("profiles:edit_profile")
+
+# ✅ Edit Profile View
+#class EditProfileView(LoginRequiredMixin, View):
+ #   def get(self, request):
+  #      user_form = EditProfileForm(instance=request.user)
+   #     password_form = PasswordChangeForm(user=request.user)
+    #    return render(request, 'profiles/edit_profile.html', {
+     #       'user_form': user_form,
+      #      'password_form': password_form
+       # })
+
+    def post(self, request):
+        user_form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        password_form = PasswordChangeForm(user=request.user, data=request.POST)
+
+        if user_form.is_valid():
+            user_form.save()
+
+            # Save profile image if using Profile model
+            profile = request.user.profile
+            if 'image' in request.FILES:
+                profile.image = request.FILES['image']
+                profile.save()
+
+            # Update password if password fields filled
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password updated successfully!')
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profiles:edit_profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+        return render(request, 'profiles/edit_profile.html', {
+            'user_form': user_form,
+            'password_form': password_form
+        })
 
 # ✅ Profile Detail Page View
 class ProfileDetailView(DetailView):
