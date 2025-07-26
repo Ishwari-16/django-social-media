@@ -12,5 +12,5 @@ urlpatterns = [
     path("edit/full/", views.EditProfileView.as_view(), name="edit_full"),
     path("edit/image/", views.EditProfileImageView.as_view(), name="edit_image"),
     path('profile/edit/full/', EditProfileView.as_view(), name='edit_profile'),
-    path('profile/edit-name/', views.edit_name_username, name='edit_name_username'),
+    path('edit-name-username/', views.edit_name_username, name='edit_name_username'),
 ]

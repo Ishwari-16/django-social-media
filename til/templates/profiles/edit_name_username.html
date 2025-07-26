@@ -1,26 +1,31 @@
-{% extends "base.html" %}
-{% block body %}
-<div class="max-w-md mx-auto bg-white p-4 mt-10 rounded shadow">
-  <h2 class="text-xl font-semibold mb-4 text-center">Edit Name / Username</h2>
-  {% if messages %}
-    {% for message in messages %}
-      <div class="bg-green-100 text-green-700 p-2 rounded mb-4 text-center">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-  <form method="POST">
-    {% csrf_token %}
-    <label>First Name</label>
-    <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full p-2 border mb-2 rounded" />
-    
-    <label>Last Name</label>
-    <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full p-2 border mb-2 rounded" />
-    
-    <label>Username</label>
-    <input type="text" name="username" value="{{ user.username }}" class="w-full p-2 border mb-4 rounded" />
-    
-    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded w-full">Update</button>
-  </form>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Edit Name / Username</h2>
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-sm-12">
+      <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" name="username" value="{{ user.username }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Update</button>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

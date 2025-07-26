@@ -21,7 +21,17 @@
                         <img class="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block" 
                         src="{{ im.url }}" alt="avatar">
                     {% endthumbnail %}
-                    <h1 class="text-gray-700 font-bold">{{ post.author.username }}</h1>
+                    <span class="text-gray-700 text-sm font-semibold sm:text-base">{{ post.author.username }}</span>
+                    <div class="d-flex justify-content-around mt-3">
+                        <div>
+                            <h6>{{ posts_count }}</h6>
+                            <p>Posts</p>
+                        </div>
+                        <div>
+                            <h6>{{ followers_count }}</h6>
+                            <p>Followers</p>
+                        </div>
+                    </div>
                 </a>
             </div>
         </div>

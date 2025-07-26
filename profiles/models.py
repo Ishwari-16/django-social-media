@@ -4,6 +4,16 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from sorl.thumbnail import ImageField  # Optional – used for thumbnailing
 
+class Follower(models.Model):
+    follower = models.ForeignKey(User, related_name='followers_set', on_delete=models.CASCADE)
+    followed = models.ForeignKey(User, related_name='followed_set', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.follower} follows {self.followed}"
+
+    def __str__(self):
+        return f"{self.follower} follows {self.followed}"
+
 class Profile(models.Model):
     user = models.OneToOneField(
         User,

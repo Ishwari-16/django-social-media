@@ -27,7 +27,18 @@ class EditProfileView(LoginRequiredMixin, View):
             'password_form': password_form
         })
 
-    
+    def profile_view(request, username):
+        user = User.objects.get(username=username)
+        followers_count = Follower.objects.filter(followed=user).count()
+
+        # Add posts count too if you're using it
+        posts_count = user.post_set.count()  # adjust based on your Post model name
+
+        return render(request, 'profile.html', {
+            'user': user,
+            'followers_count': followers_count,
+            'posts_count': posts_count,
+        })
 
     def update_profile(request):
         if request.method == 'POST':
@@ -38,18 +49,17 @@ class EditProfileView(LoginRequiredMixin, View):
         return render(request, 'edit_profile.html')
 
 
+
 def edit_name_username(request):
-    if request.method == 'POST':        
+    if request.method == 'POST':
         user = request.user
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
         user.username = request.POST.get('username', '')
         user.save()
         messages.success(request, 'Name/Username updated successfully!')
-        return redirect('edit_name_username')
-    return render(request, 'edit_name_username.html')
-
-
+        return redirect('profiles:edit_name_username')
+    return render(request, 'profiles/edit_name_username.html')
     def post(self, request):
         user_form = EditProfileForm(request.POST, request.FILES, instance=request.user)
         password_form = PasswordChangeForm(user=request.user, data=request.POST)
