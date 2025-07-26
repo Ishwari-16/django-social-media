@@ -27,4 +27,5 @@ urlpatterns = [
     path("profile/", include(profiles_urls, namespace="profiles")),
     path("accounts/", include("allauth.urls")),
     path("", include(feed_urls, namespace="feed")),
-]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+]
+urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

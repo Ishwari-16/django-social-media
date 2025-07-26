@@ -5,16 +5,21 @@ from django.dispatch import receiver
 from sorl.thumbnail import ImageField  # Optional – used for thumbnailing
 
 class Profile(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name="profile"
-    )
-    profile_image = models.ImageField(
-        upload_to='profile_pics/',
-        default='default.jpg',
-        blank=True
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_images/', default='default.jpg')
+
+
+#class Profile(models.Model):
+#    user = models.OneToOneField(
+ #       User,
+  #      on_delete=models.CASCADE,
+   #     related_name="profile"
+    #)
+#    profile_image = models.ImageField(
+ #       upload_to='profile_images/',
+  #      null=True,
+   #     blank=True,
+    #)
 
     # Remove this if you're already using `profile_image` as the main field
     # image = ImageField(upload_to='profiles')  ← Not needed
