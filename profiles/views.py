@@ -7,9 +7,16 @@ from feed.models import Post
 from followers.models import Follower
 
 from django.views.generic.edit import UpdateView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from .models import Profile
 from .forms import EditProfileForm
+
+
+def edit_profile(request):
+    if request.method == 'POST':
+        # You’ll handle form data here later
+        pass
+    return render(request, 'profiles/edit_profile.html')
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = User
