@@ -1,26 +1,37 @@
 from django.contrib.auth.models import User
-from django.views.generic import DetailView, View
+from django.views.generic import DetailView, View, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
 
 from feed.models import Post
 from followers.models import Follower
 
-from django.views.generic.edit import UpdateView
-from django.shortcuts import redirect, render
-from .models import Profile
-from .forms import EditProfileForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import UserUpdateForm, ProfileUpdateForm, EditProfileForm
 
-
+@login_required
 def edit_profile(request):
     if request.method == 'POST':
-        # You’ll handle form data here later
-        pass
-    return render(request, 'profiles/edit_profile.html')
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('profile')  # Adjust as needed
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    return render(request, 'profiles/edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = User
-    form_class = EditProfileForm
+    form_class = ProfileUpdateForm
     template_name = "profiles/edit.html"
     success_url = "/"
 

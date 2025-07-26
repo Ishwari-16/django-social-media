@@ -10,9 +10,12 @@ class Profile(models.Model):
             on_delete=models.CASCADE,
             related_name="profile"
       )
+      profile_image = models.ImageField(upload_to='profile_pics', default='default.jpg', blank=True)
+
       image = ImageField(upload_to='profiles')
       def __str__(self):
             return self.user.username
+            return f'{self.user.username} Profile'
 
 @receiver(post_save,sender=User)
 def create_user_profile(sender,instance,created,**kwargs):
