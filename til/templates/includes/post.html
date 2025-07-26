@@ -1,6 +1,63 @@
-
 {% load thumbnail %}
-<!-- component is from https://www.creative-tim.com/twcomponents/component/post-artical--> 
+{% load static %}
+
+<!-- component is from https://www.creative-tim.com/twcomponents/component/post-artical-->
+
+<div class="max-w-full sm:max-w-4xl px-4 sm:px-10 my-8 relative">
+  <!-- 👤 Large profile image on top center -->
+  <div class="flex justify-center -mb-12 z-10 relative">
+    {% if post.author.profile.image %}
+      {% thumbnail post.author.profile.image "100x100" crop="center" as im %}
+        <img src="{{ im.url }}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" alt="Profile Image" />
+      {% endthumbnail %}
+    {% else %}
+      <img src="{% static 'images/default.jpg' %}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" alt="Default Profile Image" />
+    {% endif %}
+  </div>
+
+  <!-- 📦 Post card -->
+  <div class="pt-16 pb-6 px-6 bg-white rounded-lg shadow-md">
+    
+    <!-- 📅 Post date -->
+    <div class="flex justify-between items-center">
+      <span class="font-light text-gray-600">
+        {{ post.date|date:"F j, Y, g:i a" }}
+      </span>
+    </div>
+
+    <!-- 📝 Post text -->
+    <div class="mt-4">
+      <p class="text-gray-700">{{ post.text }}</p>
+    </div>
+
+    <!-- 📎 Footer: Read more + author info -->
+    <div class="flex justify-between items-center mt-6">
+      {% if show_detail_link %}
+        <a class="text-blue-600 hover:underline" href="{% url 'feed:detail' post.id %}">Read more</a>
+      {% else %}
+        <span>&nbsp;</span>
+      {% endif %}
+
+      <!-- 👤 Small profile icon + username -->
+      <a class="flex items-center" href="{% url 'profiles:detail' post.author.username %}">
+        {% if post.author.profile.image %}
+          {% thumbnail post.author.profile.image "40x40" crop="center" as im %}
+            <img class="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block" src="{{ im.url }}" alt="avatar">
+          {% endthumbnail %}
+        {% else %}
+          <img class="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block" src="{% static 'images/default.jpg' %}" alt="Default Avatar">
+        {% endif %}
+        <h1 class="text-gray-700 font-bold">{{ post.author.username }}</h1>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!--{% load thumbnail %}
+component is from https://www.creative-tim.com/twcomponents/component/post-artical 
         <div class="max-w-full sm:max-w-4xl px-4 sm:px-10 my-4 py-6 bg-white rounded-lg shadow-md sm:flex sm:justify-between">
         <div class="flex justify-between items-center mt-4">
             <span class="font-light text-gray-600">{{post.date|date:"F j,Y, g:i:a"}}</span>
@@ -27,4 +84,4 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> -->
