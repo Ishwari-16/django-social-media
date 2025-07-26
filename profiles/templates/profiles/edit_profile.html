@@ -1,7 +1,28 @@
-<!-- templates/profiles/edit_profile.html -->
-{% extends 'base.html' %}
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 
-{% block content %}
-  <h1 class="text-2xl font-bold mb-4">Edit Profile</h1>
-  <!-- Form comes here -->
-{% endblock %}
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        password_form = PasswordChangeForm(user=request.user, data=request.POST)
+
+        if u_form.is_valid() and p_form.is_valid() and password_form.is_valid():
+            u_form.save()
+            p_form.save()
+            password_form.save()
+            update_session_auth_hash(request, password_form.user)  # Prevents logout after password change
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profiles:edit')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+        password_form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'profiles/edit_profile.html', {
+        'u_form': u_form,
+        'p_form': p_form,
+        'password_form': password_form,
+    })
