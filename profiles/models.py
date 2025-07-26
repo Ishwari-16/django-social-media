@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from sorl.thumbnail import ImageField  # Optional – used for thumbnailing
 
-
 class Profile(models.Model):
     user = models.OneToOneField(
         User,

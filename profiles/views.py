@@ -36,8 +36,9 @@ class EditProfileView(LoginRequiredMixin, View):
 
             # Save profile image if included
             profile = request.user.profile
-            if 'image' in request.FILES:
-                profile.image = request.FILES['image']
+           # ✅ Correct
+            if 'profile_image' in request.FILES:
+                profile.profile_image = request.FILES['profile_image']
                 profile.save()
 
             # Handle password change

@@ -8,7 +8,6 @@
             <p class="mt-2 text-gray-600">{{ post.text }}</p>
         </div>
         <div class="flex justify-between items-center mt-4">
-            <a class="text-blue-600 hover:underline" href="{% url 'feed:detail' post.id %}">
             {% if show_detail_link %}
                 <a class="text-blue-600 hover:underline" href="{% url 'feed:detail' post.id %}">
                   Read more
@@ -18,7 +17,7 @@
                   <span>&nbsp;</span>
             {% endif %}
                 <a class="flex items-center" href="{% url 'profiles:detail' post.author.username %}">
-                    {% thumbnail post.author.profile.image "373x373" crop="center" as im %}
+                    {% thumbnail post.author.profile.profile_image "373x373" crop="center" as im %}
                         <img class="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block" 
                         src="{{ im.url }}" alt="avatar">
                     {% endthumbnail %}
