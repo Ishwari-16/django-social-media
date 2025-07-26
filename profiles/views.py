@@ -10,6 +10,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, ProfileUpdateForm, EditProfileForm
 
+def homepage(request):
+    return render(request, 'profiles/home.html')
+    
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
