@@ -62,7 +62,8 @@ $(document).on("click", ".js-toggle-modal", function(e){
 })
 .on("click", ".js-follow", function(e){
     e.preventDefault();
-    const action = $(this).attr("data-action")
+    const $btn = $(this);
+    const action = $btn.attr("data-action")
     $.ajax({
             type:'POST',
             url:$(this).data("url"),
@@ -79,7 +80,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
                 }else {
                     // The opposite
                     console.log("DEBUG", "follow")
-                    $(this).attr("data-action", "unfollow")
+                    $(this).attr("data-action", "follow")
                 }
             },
             error:(error) => {

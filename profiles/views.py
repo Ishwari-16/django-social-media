@@ -15,11 +15,23 @@ class ProfileDetailView(DetailView):
       slug_field="username"
       slug_url_kwarg="username"
 
+      def dispatch(self,request,*args,**kwargs):
+            self.request=request
+            return super().dispatch(request,*args,**kwargs)
+
       def get_context_data(self,**kwargs):
             user=self.get_object()
             context=super().get_context_data(**kwargs)
             context['total_posts']=Post.objects.filter(author=user).count()
-            #context['total_followers']=
+            
+            if self.request.user.is_authenticated:
+                context['you_follow'] = Follower.objects.filter(
+                  following = user,
+                  followed_by = self.request.user,
+                ).exists()
+            else:
+                context['you_follow'] = False
+
             return context
 
 
@@ -34,36 +46,61 @@ class FollowView(LoginRequiredMixin, View):
 
             try:
                   other_user=User.objects.get(username=data['username'])
-            except User.DeesNotExist:
+            except User.DoesNotExist:
                   return HttpResponseBadRequest("Missing user")
-
-                  if data['action'] == "follow":
-                        #Follow
-                        follower,created=Follower.objects.get_or_create(
-                              followed_by=request.user,
-                              following=other_user
+  
+            if data['action'] == "follow":
+            # Follow
+                  Follower.objects.get_or_create(
+                        followed_by=request.user,
+                        following=other_user
+                  )
+                  wording = "Unfollow"
+            else:
+            # Unfollow
+                  try:
+                        follower = Follower.objects.get(
+                            followed_by=request.user,
+                            following=other_user,
                         )
-                  else:
-                        #Unfollow
-                        try:
-                              follower=Follower.objects.get(
-                                    followed_by=request.user,
-                                    following=other_user,
-                              )
-                        except Follower.DesNotExist:
-                              follower=None
-                        
-                        if follower:
-                              follower.delete()
+                        follower.delete()
+                  except Follower.DoesNotExist:
+                        pass
+                  wording = "Follow"
 
-                  return JsonResponse({
-                        'success':True,
-                        'wording':"Unfollow" if data['action']=="follow" else "Follow"
-                  })
-
-
-      def post(self,request,*args,**kwargs):
             return JsonResponse({
-                  data == request.POST.dict(),
-                  'done'==True
+                  'success': True,
+                  'wording': wording
             })
+
+                  #if data['action'] == "follow":
+                        #Follow
+                   #     follower,created=Follower.objects.get_or_create(
+                    #          followed_by=request.user,
+                     #         following=other_user
+                      #  )
+                 # else:
+                        #Unfollow
+                  #      try:
+                   #           follower=Follower.objects.get(
+                    #                followed_by=request.user,
+                     #               following=other_user,
+                      #        )
+                       # except Follower.DoesNotExist:
+                        #      follower=None
+                        
+                       # if follower:
+                        #      follower.delete()
+
+              #    return JsonResponse({
+               #         'success':True,
+                #        'wording':wording
+                 #       #'wording':"Unfollow" if data['action']=="follow" else "Follow"
+                  #})'''
+
+
+      #def post(self,request,*args,**kwargs):
+       #     return JsonResponse({
+        #          data == request.POST.dict(),
+         #         'done':True
+          #  })
