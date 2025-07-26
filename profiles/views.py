@@ -38,16 +38,16 @@ class EditProfileView(LoginRequiredMixin, View):
         return render(request, 'edit_profile.html')
 
 
-    def edit_name_username(request):
-        if request.method == 'POST':
-            user = request.user
-            user.first_name = request.POST.get('first_name', '')
-            user.last_name = request.POST.get('last_name', '')
-            user.username = request.POST.get('username', '')
-            user.save()
-            messages.success(request, 'Name/Username updated successfully!')
-            return redirect('edit_name_username')
-        return render(request, 'edit_name_username.html')
+def edit_name_username(request):
+    if request.method == 'POST':        
+        user = request.user
+        user.first_name = request.POST.get('first_name', '')
+        user.last_name = request.POST.get('last_name', '')
+        user.username = request.POST.get('username', '')
+        user.save()
+        messages.success(request, 'Name/Username updated successfully!')
+        return redirect('edit_name_username')
+    return render(request, 'edit_name_username.html')
 
 
     def post(self, request):
