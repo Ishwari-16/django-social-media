@@ -7,57 +7,25 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
 from feed.models import Post
 from followers.models import Follower
-from .models import Profile  # 👈 Make sure you have Profile model with image field
-from .forms import EditProfileForm  # 👈 Custom form created to handle everything
+from .models import Profile
+from .forms import EditProfileForm
 
-# ✅ Homepage View — show all users
+# ✅ Homepage View — optional
 def homepage(request):
-    users = User.objects.all()
-    return render(request, "profiles/home.html", {"users": users})
-
-class EditProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, "profiles/edit_profile.html", {"user": request.user})
-
-    def post(self, request):
-        user = request.user
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        image = request.FILES.get("image")
-
-        # Update user fields
-        user.first_name = first_name
-        user.last_name = last_name
-        user.username = username
-
-        if password:
-            user.set_password(password)
-
-        user.save()
-
-        # Update profile image (if exists)
-        if hasattr(user, 'profile'):
-            if image:
-                user.profile.image = image
-                user.profile.save()
-
-        messages.success(request, "Profile updated successfully.")
-        return redirect("profiles:edit_profile")
+    return render(request, 'profiles/home.html')
 
 # ✅ Edit Profile View
-#class EditProfileView(LoginRequiredMixin, View):
- #   def get(self, request):
-  #      user_form = EditProfileForm(instance=request.user)
-   #     password_form = PasswordChangeForm(user=request.user)
-    #    return render(request, 'profiles/edit_profile.html', {
-     #       'user_form': user_form,
-      #      'password_form': password_form
-       # })
+class EditProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        user_form = EditProfileForm(instance=request.user)
+        password_form = PasswordChangeForm(user=request.user)
+        return render(request, 'profiles/edit_profile.html', {
+            'user_form': user_form,
+            'password_form': password_form
+        })
 
     def post(self, request):
         user_form = EditProfileForm(request.POST, request.FILES, instance=request.user)
@@ -66,25 +34,38 @@ class EditProfileView(LoginRequiredMixin, View):
         if user_form.is_valid():
             user_form.save()
 
-            # Save profile image if using Profile model
+            # Save profile image if included
             profile = request.user.profile
             if 'image' in request.FILES:
                 profile.image = request.FILES['image']
                 profile.save()
 
-            # Update password if password fields filled
+            # Handle password change
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
                 messages.success(request, 'Password updated successfully!')
+
             messages.success(request, 'Profile updated successfully!')
             return redirect('profiles:edit_profile')
         else:
             messages.error(request, 'Please correct the errors below.')
+
         return render(request, 'profiles/edit_profile.html', {
             'user_form': user_form,
             'password_form': password_form
         })
+
+# ✅ Image-only update (optional)
+class EditProfileImageView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'profiles/edit_image.html')
+
+    def post(self, request):
+        profile = request.user.profile
+        profile.image = request.FILES.get('image')
+        profile.save()
+        return redirect('profiles:profile', username=request.user.username)
 
 # ✅ Profile Detail Page View
 class ProfileDetailView(DetailView):
