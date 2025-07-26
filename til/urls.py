@@ -24,8 +24,7 @@ from feed import urls as feed_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("profile/", include("profiles_urls", namespace="profiles")),
+    path("profile/", include(profiles_urls, namespace="profiles")),
     path("accounts/", include("allauth.urls")),
     path("", include(feed_urls, namespace="feed")),
-    path("feed/", include("feed.urls", namespace="feed")),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

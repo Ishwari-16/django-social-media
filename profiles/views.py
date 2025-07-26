@@ -4,11 +4,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserChangeForm  # ✅ Use built-in form
 
 from feed.models import Post
 from followers.models import Follower
+
+class EditProfileImageView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, "profiles/edit_image.html")
+
+    def post(self, request):
+        # handle image upload logic here
+        return redirect("profiles:edit_image")
 
 # ✅ Homepage View — show all users
 def homepage(request):

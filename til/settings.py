@@ -65,9 +65,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'til.urls'
 
-ROOT_URLCONF = 'profiles.urls'  # if profiles is the only app handling URLs
-
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
