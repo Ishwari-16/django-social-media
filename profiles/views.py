@@ -2,42 +2,30 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
+from django.shortcuts import render
+from django.contrib.auth.forms import UserChangeForm  # ✅ Use built-in form
 
 from feed.models import Post
 from followers.models import Follower
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import ProfileUpdateForm, FollowView, homepage
-
-# Home page listing all users
+# ✅ Homepage View — show all users
 def homepage(request):
     users = User.objects.all()
-    return render(request, 'profiles/home.html', {'users': users})
+    return render(request, "profiles/home.html", {"users": users})
 
+# ✅ Edit Profile View — no custom form needed
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserChangeForm  # ✅ Using built-in form instead of missing EditProfileForm
+    template_name = 'profiles/edit_profile.html'
+    success_url = reverse_lazy('profiles:home')
 
-# Edit Profile View (Function-Based View)
-@login_required
-def edit_profile(request):
-    if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+    def get_object(self):
+        return self.request.user
 
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            return redirect('profiles:detail', username=request.user.username)  # Fix redirect target
-    else:
-        user_form = UserUpdateForm(instance=request.user)
-        profile_form = ProfileUpdateForm(instance=request.user.profile)
-
-    return render(request, 'profiles/edit_profile.html', {
-        'user_form': user_form,
-        'profile_form': profile_form,
-    })
-
-
-# Profile Detail Page
+# ✅ Profile Detail Page View
 class ProfileDetailView(DetailView):
     http_method_names = ["get"]
     template_name = "profiles/detail.html"
@@ -61,8 +49,7 @@ class ProfileDetailView(DetailView):
 
         return context
 
-
-# AJAX Follow / Unfollow View
+# ✅ Follow/Unfollow AJAX View
 class FollowView(LoginRequiredMixin, View):
     http_method_names = ["post"]
 
