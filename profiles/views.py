@@ -5,13 +5,20 @@ from django.http import JsonResponse, HttpResponseBadRequest
 
 from feed.models import Post
 from followers.models import Follower
-from django.shortcuts import render, redirect
-from .forms import ProfileUpdateForm, UserUpdateForm, PasswordChangeForm
 
-@login_required
-def edit_profile(request):
-    # your update logic goes here
-    return render(request, 'profiles/edit_profile.html')
+from django.views.generic.edit import UpdateView
+from django.shortcuts import redirect
+from .models import Profile
+from .forms import EditProfileForm
+
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = "profiles/edit.html"
+    success_url = "/"
+
+    def get_object(self):
+        return self.request.user
 
 class ProfileDetailView(DetailView):
       http_method_names=["get"]
