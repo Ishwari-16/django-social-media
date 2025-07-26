@@ -2,8 +2,10 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from . models import Post 
 
+from followers.models import Follower
+
+from . models import Post 
 
 
 class HomePage(TemplateView):
@@ -17,12 +19,18 @@ class HomePage(TemplateView):
       def get_context_data(self,*args,**kwargs):
             context=super().get_context_data(*args,**kwargs)
             if self.request.user.is_authenticated:
-                  following = Follower.objects.filter(followed_by=self.request.user).values_list('following',flat=True)
-                  print(following)
-                  #posts = ...
+                  following = list(
+                        Follower.objects.filter(followed_by=self.request.user).values_list('following',flat=True)
+                  )
+                  if not following:
+                        # Show the default id
+                        posts = Post.objects.all().order_by('-id')[0:30]
+                  else:
+                        posts = Post.objects.filter(author__in=following).order_by('-id')[0:60]
             else:
                   posts = Post.objects.all().order_by('-id')[0:30]
-                  return context
+            context['posts'] = posts
+            return context
 
             
 
