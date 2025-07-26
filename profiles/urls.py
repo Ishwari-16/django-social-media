@@ -6,9 +6,11 @@ app_name = 'profiles'
 
 urlpatterns = [
     path('', homepage, name='home'),
-    path('<str:username>/', ProfileDetailView.as_view(), name='detail'),
+    path('profile/<str:username>/', ProfileDetailView.as_view(), name='detail'),
     path('<str:username>/follow/', FollowView.as_view(), name='follow'),
     path('edit/', EditProfileView.as_view(), name='edit'),
     path("edit/full/", views.EditProfileView.as_view(), name="edit_full"),
     path("edit/image/", views.EditProfileImageView.as_view(), name="edit_image"),
+    path('profile/edit/full/', EditProfileView.as_view(), name='edit_profile'),
+    path('profile/edit-name/', views.edit_name_username, name='edit_name_username'),
 ]

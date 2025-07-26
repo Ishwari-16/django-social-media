@@ -27,6 +27,29 @@ class EditProfileView(LoginRequiredMixin, View):
             'password_form': password_form
         })
 
+    
+
+    def update_profile(request):
+        if request.method == 'POST':
+        # handle full profile update including image
+            ...
+            messages.success(request, "Profile updated successfully!")
+            return redirect('update_profile')
+        return render(request, 'edit_profile.html')
+
+
+    def edit_name_username(request):
+        if request.method == 'POST':
+            user = request.user
+            user.first_name = request.POST.get('first_name', '')
+            user.last_name = request.POST.get('last_name', '')
+            user.username = request.POST.get('username', '')
+            user.save()
+            messages.success(request, 'Name/Username updated successfully!')
+            return redirect('edit_name_username')
+        return render(request, 'edit_name_username.html')
+
+
     def post(self, request):
         user_form = EditProfileForm(request.POST, request.FILES, instance=request.user)
         password_form = PasswordChangeForm(user=request.user, data=request.POST)
