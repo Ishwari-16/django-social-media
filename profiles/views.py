@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.views.generic import DetailView, View, UpdateView
+from django.views.generic import DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
 
@@ -8,11 +8,15 @@ from followers.models import Follower
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import UserUpdateForm, ProfileUpdateForm, EditProfileForm
+from .forms import ProfileUpdateForm, FollowView, homepage
 
+# Home page listing all users
 def homepage(request):
-    return render(request, 'profiles/home.html')
-    
+    users = User.objects.all()
+    return render(request, 'profiles/home.html', {'users': users})
+
+
+# Edit Profile View (Function-Based View)
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
@@ -22,7 +26,7 @@ def edit_profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            return redirect('profile')  # Adjust as needed
+            return redirect('profiles:detail', username=request.user.username)  # Fix redirect target
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.profile)
@@ -32,109 +36,65 @@ def edit_profile(request):
         'profile_form': profile_form,
     })
 
-class EditProfileView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = ProfileUpdateForm
-    template_name = "profiles/edit.html"
-    success_url = "/"
 
-    def get_object(self):
-        return self.request.user
-
+# Profile Detail Page
 class ProfileDetailView(DetailView):
-      http_method_names=["get"]
-      template_name="profiles/detail.html"
-      model=User
-      context_object_name="user"
-      slug_field="username"
-      slug_url_kwarg="username"
+    http_method_names = ["get"]
+    template_name = "profiles/detail.html"
+    model = User
+    context_object_name = "user"
+    slug_field = "username"
+    slug_url_kwarg = "username"
 
-      def dispatch(self,request,*args,**kwargs):
-            self.request=request
-            return super().dispatch(request,*args,**kwargs)
+    def get_context_data(self, **kwargs):
+        user = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['total_posts'] = Post.objects.filter(author=user).count()
 
-      def get_context_data(self,**kwargs):
-            user=self.get_object()
-            context=super().get_context_data(**kwargs)
-            context['total_posts']=Post.objects.filter(author=user).count()
-            
-            if self.request.user.is_authenticated:
-                context['you_follow'] = Follower.objects.filter(
-                  following = user,
-                  followed_by = self.request.user,
-                ).exists()
-            else:
-                context['you_follow'] = False
+        if self.request.user.is_authenticated:
+            context['you_follow'] = Follower.objects.filter(
+                following=user,
+                followed_by=self.request.user,
+            ).exists()
+        else:
+            context['you_follow'] = False
 
-            return context
+        return context
 
 
+# AJAX Follow / Unfollow View
 class FollowView(LoginRequiredMixin, View):
-      http_method_names=["post"]
+    http_method_names = ["post"]
 
-      def post(self,request,*args,**kwargs):
-            data = request.POST.dict()
+    def post(self, request, *args, **kwargs):
+        data = request.POST.dict()
 
-            if "action" not in data or "username" not in data:
-                  return HttpResponseBadRequest("Missing data")
+        if "action" not in data or "username" not in data:
+            return HttpResponseBadRequest("Missing data")
 
+        try:
+            other_user = User.objects.get(username=data['username'])
+        except User.DoesNotExist:
+            return HttpResponseBadRequest("User not found")
+
+        if data['action'] == "follow":
+            Follower.objects.get_or_create(
+                followed_by=request.user,
+                following=other_user
+            )
+            wording = "Unfollow"
+        else:
             try:
-                  other_user=User.objects.get(username=data['username'])
-            except User.DoesNotExist:
-                  return HttpResponseBadRequest("Missing user")
-  
-            if data['action'] == "follow":
-            # Follow
-                  Follower.objects.get_or_create(
-                        followed_by=request.user,
-                        following=other_user
-                  )
-                  wording = "Unfollow"
-            else:
-            # Unfollow
-                  try:
-                        follower = Follower.objects.get(
-                            followed_by=request.user,
-                            following=other_user,
-                        )
-                        follower.delete()
-                  except Follower.DoesNotExist:
-                        pass
-                  wording = "Follow"
+                follower = Follower.objects.get(
+                    followed_by=request.user,
+                    following=other_user
+                )
+                follower.delete()
+            except Follower.DoesNotExist:
+                pass
+            wording = "Follow"
 
-            return JsonResponse({
-                  'success': True,
-                  'wording': wording
-            })
-
-                  #if data['action'] == "follow":
-                        #Follow
-                   #     follower,created=Follower.objects.get_or_create(
-                    #          followed_by=request.user,
-                     #         following=other_user
-                      #  )
-                 # else:
-                        #Unfollow
-                  #      try:
-                   #           follower=Follower.objects.get(
-                    #                followed_by=request.user,
-                     #               following=other_user,
-                      #        )
-                       # except Follower.DoesNotExist:
-                        #      follower=None
-                        
-                       # if follower:
-                        #      follower.delete()
-
-              #    return JsonResponse({
-               #         'success':True,
-                #        'wording':wording
-                 #       #'wording':"Unfollow" if data['action']=="follow" else "Follow"
-                  #})'''
-
-
-      #def post(self,request,*args,**kwargs):
-       #     return JsonResponse({
-        #          data == request.POST.dict(),
-         #         'done':True
-          #  })
+        return JsonResponse({
+            'success': True,
+            'wording': wording
+        })
