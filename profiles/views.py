@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -10,44 +10,45 @@ from django.contrib.auth.forms import PasswordChangeForm
 from feed.models import Post
 from followers.models import Follower
 from .models import Profile
+from .forms import EditProfileForm  # ✅ Make sure this exists
 
 # ✅ Homepage View
 def homepage(request):
     return render(request, 'profiles/home.html')
 
-# ✅ Edit Profile View (Function-Based View)
+# ✅ Edit Profile (Class-Based)
+from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
-def edit_profile(request):
-    user = request.user
-    profile = user.profile
+class EditProfileView(View):
+    def get(self, request):
+        return render(request, 'profiles/edit_profile.html')
 
-    if request.method == 'POST':
-        user_form = EditProfileForm(request.POST, instance=user)
-        password_form = PasswordChangeForm(user=user, data=request.POST)
+    def post(self, request):
+        user = request.user
 
-        if user_form.is_valid() and password_form.is_valid():
-            user_form.save()
-            user = password_form.save()
-            update_session_auth_hash(request, user)
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.username = request.POST.get('username')
 
-            if 'profile_image' in request.FILES:
-                profile.image = request.FILES['profile_image']
-                profile.save()
+        password = request.POST.get('password')
+        if password:
+            user.set_password(password)
 
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('profiles:edit_profile')
-        else:
-            messages.error(request, 'Please correct the errors below.')
-    else:
-        user_form = EditProfileForm(instance=user)
-        password_form = PasswordChangeForm(user=user)
+        # For image upload
+        if 'profile_image' in request.FILES:
+            user.profile.image = request.FILES['profile_image']
+            user.profile.save()
 
-    return render(request, 'profiles/edit_profile.html', {
-        'user_form': user_form,
-        'password_form': password_form
-    })
+        user.save()
+        messages.success(request, "Profile updated successfully.")
+        return redirect('profiles:edit')  # Or wherever you want to redirect
 
-# ✅ Edit Profile Image View (Optional)
+def edit_name_username(request):
+    return render(request, 'profiles/edit_name_username.html')
+
+# ✅ Edit Profile Image View
 class EditProfileImageView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'profiles/edit_image.html')
@@ -56,7 +57,7 @@ class EditProfileImageView(LoginRequiredMixin, View):
         profile = request.user.profile
         profile.image = request.FILES.get('image')
         profile.save()
-        return redirect('profiles:profile', username=request.user.username)
+        return redirect('profiles:detail', username=request.user.username)
 
 # ✅ Profile Detail Page View
 class ProfileDetailView(DetailView):
@@ -74,13 +75,12 @@ class ProfileDetailView(DetailView):
         context['followers_count'] = Follower.objects.filter(following=user).count()
         context['following_count'] = Follower.objects.filter(followed_by=user).count()
 
+        context['you_follow'] = False
         if self.request.user.is_authenticated:
             context['you_follow'] = Follower.objects.filter(
                 following=user,
                 followed_by=self.request.user,
             ).exists()
-        else:
-            context['you_follow'] = False
 
         return context
 
@@ -90,7 +90,6 @@ class FollowView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         data = request.POST.dict()
-
         if "action" not in data or "username" not in data:
             return HttpResponseBadRequest("Missing data")
 
@@ -100,23 +99,10 @@ class FollowView(LoginRequiredMixin, View):
             return HttpResponseBadRequest("User not found")
 
         if data['action'] == "follow":
-            Follower.objects.get_or_create(
-                followed_by=request.user,
-                following=other_user
-            )
+            Follower.objects.get_or_create(followed_by=request.user, following=other_user)
             wording = "Unfollow"
         else:
-            try:
-                follower = Follower.objects.get(
-                    followed_by=request.user,
-                    following=other_user
-                )
-                follower.delete()
-            except Follower.DoesNotExist:
-                pass
+            Follower.objects.filter(followed_by=request.user, following=other_user).delete()
             wording = "Follow"
 
-        return JsonResponse({
-            'success': True,
-            'wording': wording
-        })
+        return JsonResponse({'success': True, 'wording': wording})

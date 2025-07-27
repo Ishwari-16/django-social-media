@@ -28,7 +28,7 @@
 <div class="max-w-md mx-auto bg-white shadow-md p-6 rounded-lg mt-6">
   <h2 class="text-2xl font-bold mb-4 text-center">Edit Your Profile</h2>
 
-<form method="POST" enctype="multipart/form-data" action="{% url 'profiles:profile_edit' %}">
+<form method="POST" action="{% url 'profiles:edit' %}" enctype="multipart/form-data" >
     {% csrf_token %}
 
     <label>First Name:</label>
