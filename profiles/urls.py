@@ -13,4 +13,6 @@ urlpatterns = [
     path("edit/image/", views.EditProfileImageView.as_view(), name="edit_image"),
     path('profile/edit/full/', EditProfileView.as_view(), name='edit_profile'),
     path('edit-name-username/', views.edit_name_username, name='edit_name_username'),
+    path('edit/', edit_profile, name='profile_edit'),
+
 ]

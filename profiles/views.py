@@ -2,95 +2,52 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.views.generic.edit import UpdateView
-from django.urls import reverse_lazy
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+
 from feed.models import Post
 from followers.models import Follower
 from .models import Profile
-from .forms import EditProfileForm
 
-# ✅ Homepage View — optional
+# ✅ Homepage View
 def homepage(request):
     return render(request, 'profiles/home.html')
 
-# ✅ Edit Profile View
-class EditProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        user_form = EditProfileForm(instance=request.user)
-        password_form = PasswordChangeForm(user=request.user)
-        return render(request, 'profiles/edit_profile.html', {
-            'user_form': user_form,
-            'password_form': password_form
-        })
+# ✅ Edit Profile View (Function-Based View)
 
-    def profile_view(request, username):
-        user = User.objects.get(username=username)
-        followers_count = Follower.objects.filter(followed=user).count()
+def edit_profile(request):
+    user = request.user
+    profile = user.profile
 
-        # Add posts count too if you're using it
-        posts_count = user.post_set.count()  # adjust based on your Post model name
-
-        return render(request, 'profile.html', {
-            'user': user,
-            'followers_count': followers_count,
-            'posts_count': posts_count,
-        })
-
-    def update_profile(request):
-        if request.method == 'POST':
-        # handle full profile update including image
-            ...
-            messages.success(request, "Profile updated successfully!")
-            return redirect('update_profile')
-        return render(request, 'edit_profile.html')
-
-
-
-def edit_name_username(request):
     if request.method == 'POST':
-        user = request.user
-        user.first_name = request.POST.get('first_name', '')
-        user.last_name = request.POST.get('last_name', '')
-        user.username = request.POST.get('username', '')
-        user.save()
-        messages.success(request, 'Name/Username updated successfully!')
-        return redirect('profiles:edit_name_username')
-    return render(request, 'profiles/edit_name_username.html')
-    def post(self, request):
-        user_form = EditProfileForm(request.POST, request.FILES, instance=request.user)
-        password_form = PasswordChangeForm(user=request.user, data=request.POST)
+        user_form = EditProfileForm(request.POST, instance=user)
+        password_form = PasswordChangeForm(user=user, data=request.POST)
 
-        if user_form.is_valid():
+        if user_form.is_valid() and password_form.is_valid():
             user_form.save()
+            user = password_form.save()
+            update_session_auth_hash(request, user)
 
-            # Save profile image if included
-            profile = request.user.profile
-           # ✅ Correct
             if 'profile_image' in request.FILES:
-                profile.profile_image = request.FILES['profile_image']
+                profile.image = request.FILES['profile_image']
                 profile.save()
-
-            # Handle password change
-            if password_form.is_valid():
-                user = password_form.save()
-                update_session_auth_hash(request, user)
-                messages.success(request, 'Password updated successfully!')
 
             messages.success(request, 'Profile updated successfully!')
             return redirect('profiles:edit_profile')
         else:
             messages.error(request, 'Please correct the errors below.')
+    else:
+        user_form = EditProfileForm(instance=user)
+        password_form = PasswordChangeForm(user=user)
 
-        return render(request, 'profiles/edit_profile.html', {
-            'user_form': user_form,
-            'password_form': password_form
-        })
+    return render(request, 'profiles/edit_profile.html', {
+        'user_form': user_form,
+        'password_form': password_form
+    })
 
-# ✅ Image-only update (optional)
+# ✅ Edit Profile Image View (Optional)
 class EditProfileImageView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'profiles/edit_image.html')
@@ -114,6 +71,8 @@ class ProfileDetailView(DetailView):
         user = self.get_object()
         context = super().get_context_data(**kwargs)
         context['total_posts'] = Post.objects.filter(author=user).count()
+        context['followers_count'] = Follower.objects.filter(following=user).count()
+        context['following_count'] = Follower.objects.filter(followed_by=user).count()
 
         if self.request.user.is_authenticated:
             context['you_follow'] = Follower.objects.filter(

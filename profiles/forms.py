@@ -3,13 +3,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .models import Profile
 
+# ✅ Form to edit basic user profile details
 class EditProfileForm(UserChangeForm):
-    password = None  # Hide password field from form
+    password = None  # Hide password field from the form
 
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username']
 
+# ✅ Form to change user password
 class ChangePasswordForm(forms.Form):
     old_password = forms.CharField(widget=forms.PasswordInput, label="Old Password")
     new_password = forms.CharField(widget=forms.PasswordInput, label="New Password")
@@ -23,26 +25,8 @@ class ChangePasswordForm(forms.Form):
             raise forms.ValidationError("New passwords do not match.")
         return cleaned_data
 
-class ProfileImageForm(forms.ModelForm):
+# ✅ Form to handle profile image (used in views, required for import to work)
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_image']
-
-
-
-
-#from django import forms
-#from django.contrib.auth.models import User
-#from .models import Profile
-
-#class EditProfileForm(forms.ModelForm):
-#    class Meta:
- #       model = User
-#      fields = ['first_name', 'last_name', 'username', 'password']
- #       widgets = {
-  #          'password': forms.PasswordInput(),
-   #     }
-
-#class ProfileImageForm(forms.ModelForm):
-#    class Meta:
- #      fields = ['profile_image']
+        fields = ['profile_image']  # or 'profile_image' if that's the field name in your model
