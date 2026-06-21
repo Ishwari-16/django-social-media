@@ -4,6 +4,11 @@ from . import views
 app_name = "messaging"
 
 urlpatterns = [
+    path(
+        "<int:conversation_id>/",
+        views.ConversationDetailView.as_view(),
+        name="detail"
+    ),
     path("", views.ConversationListView.as_view(), name="list"),
     path("start/<str:username>/", views.start_conversation, name="start"),
     path(
