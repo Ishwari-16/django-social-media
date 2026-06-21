@@ -44,9 +44,6 @@ INSTALLED_APPS = [
     'profiles',
     'followers',
     'notifications',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
     'sorl.thumbnail',
     'messaging.apps.MessagingConfig',
 ]
