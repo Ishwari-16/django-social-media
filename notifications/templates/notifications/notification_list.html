@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block body %}
+<div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
+    <h2 class="text-2xl font-bold text-white">Notifications</h2>
+    <p class="text-blue-100 mt-1">View your recent activity</p>
+  </div>
+
+  <div class="p-6">
+    {% if unread_count > 0 %}
+      <div class="mb-4 flex justify-between items-center">
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ unread_count }} unread notifications</span>
+        <button onclick="markAllRead()" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+          Mark all as read
+        </button>
+      </div>
+    {% endif %}
+
+    {% if notifications %}
+      <div class="space-y-3">
+        {% for notification in notifications %}
+          <div class="glass-card rounded-xl p-4 hover:shadow-lg transition-shadow duration-200 {% if not notification.is_read %}border-l-4 border-blue-500{% endif %}">
+            <div class="flex items-start space-x-3">
+              <a href="{% url 'profiles:detail' notification.sender.username %}" class="flex-shrink-0">
+                {% if notification.sender.profile.profile_image %}
+                  <img src="{{ notification.sender.profile.profile_image.url }}" class="w-10 h-10 rounded-full object-cover" alt="{{ notification.sender.username }}" />
+                {% else %}
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">{{ notification.sender.username|first|upper }}</span>
+                  </div>
+                {% endif %}
+              </a>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                  <a href="{% url 'profiles:detail' notification.sender.username %}" class="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    {{ notification.sender.username }}
+                  </a>
+                  {{ notification.message }}
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ notification.created_at|timesince }} ago</p>
+              </div>
+              {% if not notification.is_read %}
+                <button onclick="markRead({{ notification.id }})" class="flex-shrink-0 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                  <i class='bx bx-check text-xl'></i>
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+      <div class="mt-6 flex justify-center space-x-2">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            Previous
+          </a>
+        {% endif %}
+        <span class="px-4 py-2 text-gray-700 dark:text-gray-300">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            Next
+          </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="text-center py-12">
+        <i class='bx bx-bell text-6xl text-gray-300 dark:text-gray-600'></i>
+        <p class="text-gray-500 dark:text-gray-400 mt-4">No notifications yet</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  function markRead(notificationId) {
+    fetch('/notifications/' + notificationId + '/mark-read/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      }
+    });
+  }
+
+  function markAllRead() {
+    fetch('/notifications/mark-all-read/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      }
+    });
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}

@@ -17,21 +17,24 @@ class HomePage(TemplateView):
             return super().dispatch(request,*args,**kwargs)
       
       def get_context_data(self,*args,**kwargs):
-            context=super().get_context_data(*args,**kwargs)
+            context = super().get_context_data(*args, **kwargs)
             if self.request.user.is_authenticated:
                   following = list(
-                        Follower.objects.filter(followed_by=self.request.user).values_list('following',flat=True)
+                        Follower.objects.filter(
+                              followed_by=self.request.user
+                        ).values_list('following', flat=True)
                   )
-                  if not following:
-                        # Show the default id
-                        posts = Post.objects.all().order_by('-id')[0:30]
-                  else:
-                        posts = Post.objects.filter(author__in=following).order_by('-id')[0:60]
+
+                  following.append(self.request.user.id)
+
+                  posts = Post.objects.filter(
+                        author__in=following
+                  ).order_by('-id')[:60]
             else:
-                  posts = Post.objects.all().order_by('-id')[0:30]
+                  posts = Post.objects.all().order_by('-id')[:30]
+
             context['posts'] = posts
             return context
-
             
 
 

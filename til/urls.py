@@ -15,9 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf.urls.static import static
-from django.conf.urls import include
 from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
 from profiles import urls as profiles_urls
 from feed import urls as feed_urls
@@ -25,6 +24,8 @@ from feed import urls as feed_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("profile/", include('profiles.urls', namespace="profiles")),
+    path("notifications/", include('notifications.urls', namespace="notifications")),
+    path("messages/", include('messaging.urls', namespace="messaging")),
     path("accounts/", include("allauth.urls")),
     path("", include(feed_urls, namespace="feed")),
 ]

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Messages{% endblock %}
+
+{% block body %}
+<div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
+    <h2 class="text-2xl font-bold text-white">Messages</h2>
+    <p class="text-blue-100 mt-1">View your conversations</p>
+  </div>
+
+  <div class="p-6">
+    {% if unread_count > 0 %}
+      <div class="mb-4">
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ unread_count }} unread messages</span>
+      </div>
+    {% endif %}
+
+    {% if conversations %}
+      <div class="space-y-3">
+        {% for conversation in conversations %}
+          <a href="{% url 'messaging:detail' conversation.id %}" class="block glass-card rounded-xl p-4 hover:shadow-lg transition-shadow duration-200">
+            <div class="flex items-center space-x-3">
+              {% for participant in conversation.participants.all %}
+                {% if participant != request.user %}
+                  {% if participant.profile.profile_image %}
+                    <img src="{{ participant.profile.profile_image.url }}" class="w-12 h-12 rounded-full object-cover" alt="{{ participant.username }}" />
+                  {% else %}
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                      <span class="text-white font-semibold">{{ participant.username|first|upper }}</span>
+                    </div>
+                  {% endif %}
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-semibold text-gray-900 dark:text-white">{{ participant.username }}</h3>
+                    {% with last_message=conversation.messages.last %}
+                      {% if last_message %}
+                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ last_message.content }}</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500">{{ last_message.timestamp|timesince }} ago</p>
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-12">
+        <i class='bx bx-message-dots text-6xl text-gray-300 dark:text-gray-600'></i>
+        <p class="text-gray-500 dark:text-gray-400 mt-4">No conversations yet</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Start a conversation with someone</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

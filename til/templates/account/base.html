@@ -1,83 +1,170 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}My Site{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>{% block title %}Social Media{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          },
+          backdropBlur: {
+            xs: '2px',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .dark .glass {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen transition-colors duration-300">
+  <!-- Sticky Navbar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a href="/" class="flex items-center space-x-2">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <i class='bx bxl-twitter text-2xl text-white'></i>
+            </div>
+            <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">Social Media</span>
+          </a>
+        </div>
 
-  <!-- Navbar -->
-  <header class="bg-white shadow p-4 flex justify-between items-center">
-    <div class="text-xl font-bold text-indigo-600">
-      <a href="/">TIL</a>
+        <!-- Right Side Actions -->
+        <div class="flex items-center space-x-4">
+          <!-- Dark Mode Toggle -->
+          <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <i class='bx bx-moon text-xl text-gray-600 dark:text-gray-300 dark:hidden'></i>
+            <i class='bx bx-sun text-xl text-gray-300 hidden dark:block'></i>
+          </button>
+
+          {% if request.user.is_authenticated %}
+            <!-- Profile Dropdown -->
+            <div class="relative">
+              <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                {% if request.user.profile.profile_image %}
+                  <img src="{{ request.user.profile.profile_image.url }}" 
+                       alt="Profile" 
+                       class="w-9 h-9 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" />
+                {% else %}
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600">
+                    <span class="text-white font-semibold text-sm">{{ request.user.username|first|upper }}</span>
+                  </div>
+                {% endif %}
+              </button>
+              
+              <!-- Dropdown Menu -->
+              <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 z-50">
+                <a href="{% url 'profiles:detail' request.user.username %}" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <i class='bx bx-user mr-2'></i> My Profile
+                </a>
+                <a href="{% url 'profiles:edit' %}" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <i class='bx bx-edit mr-2'></i> Edit Profile
+                </a>
+                <hr class="my-2 border-gray-100 dark:border-gray-700">
+                <a href="{% url 'account_logout' %}" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                  <i class='bx bx-log-out mr-2'></i> Logout
+                </a>
+              </div>
+            </div>
+          {% else %}
+            <!-- Login/Signup Buttons -->
+            <a href="{% url 'account_login' %}" class="px-4 py-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+              Login
+            </a>
+            <a href="{% url 'account_signup' %}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-all duration-200">
+              Sign Up
+            </a>
+          {% endif %}
+        </div>
+      </div>
     </div>
-
-    <div class="flex items-center space-x-4">
-      {% if request.user.is_authenticated %}
-        <span class="text-sm font-medium text-gray-700">{{ request.user.username }}</span>
-
-        <!-- Profile image -->
-        <img 
-          src="{% if request.user.profile.image %}{{ request.user.profile.image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" 
-          alt="Profile"
-          class="w-10 h-10 rounded-full object-cover border"
-        />
-
-        <a href="{% url 'account_logout' %}" class="text-sm text-red-600 hover:underline">Logout</a>
-      {% else %}
-        <a href="{% url 'account_login' %}" class="text-sm text-blue-600 hover:underline">Login</a>
-      {% endif %}
-    </div>
-  </header>
+  </nav>
 
   <!-- Content -->
-  <main class="p-6">
+  <main class="pt-16">
     {% block body %}
     {% block content %}{% endblock %}
     {% endblock %}
   </main>
 
+  <script>
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+    }
+    
+    // Load dark mode preference
+    if (localStorage.getItem('darkMode') === 'true' || 
+        (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Profile Menu Toggle
+    function toggleProfileMenu() {
+      const menu = document.getElementById('profile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      const profileMenu = document.getElementById('profile-menu');
+      const profileButton = event.target.closest('button');
+      
+      if (!profileButton && !profileMenu.contains(event.target)) {
+        profileMenu.classList.add('hidden');
+      }
+    });
+  </script>
 </body>
 </html>
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <a href="/">Home</a>
-  {% if request.user.is_authenticated %}
-  <a href="{% url 'account_logout' %}">Logout</a>
-  {% else %}
-  <a href="{% url 'account_login' %}">Login</a>
-  {% endif %}
-  <hr>
-  {% block body %}
-  {% block content %} {% endblock %}
-  {% endblock %}
-
-</body>
-</html>-->
-
-
-
-
-
-
-
-
-
-
 
 
 

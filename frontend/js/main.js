@@ -29,7 +29,8 @@ $.ajaxSetup({
 
 $(document).on("click", ".js-toggle-modal", function(e){
       e.preventDefault();
-      $(".js-model").toggleClass("hidden");
+      $("#post-modal").toggleClass("hidden");
+      $("#post-modal").toggleClass("flex");
 })
     .on("click", ".js-submit", function(e){
         e.preventDefault()
@@ -49,9 +50,9 @@ $(document).on("click", ".js-toggle-modal", function(e){
                 text:text
             },
         success:(dataHtml) => {
-            $(".js-modal").addClass("hidden");
+            $("#post-modal").addClass("hidden");
             $("#posts-container").prepend(dataHtml);
-            $btn.prop("disabled",false).text("New Post");
+            $btn.prop("disabled",false).text("Post");
             $(".js-post-text").val('')
         },
         error:(error) => {

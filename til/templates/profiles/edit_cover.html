@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Cover Photo{% endblock %}
+
+{% block body %}
+<div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
+    <h2 class="text-2xl font-bold text-white">Edit Cover Photo</h2>
+    <p class="text-blue-100 mt-1">Update your cover image</p>
+  </div>
+
+  <div class="p-6">
+    {% if messages %}
+      <div class="mb-6 space-y-2">
+        {% for message in messages %}
+          <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'profiles:edit_cover' %}" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Cover Photo Section -->
+      <div class="space-y-4">
+        <h3 class="font-semibold text-gray-900 dark:text-white">Cover Photo</h3>
+        
+        <div class="relative">
+          {% if user.profile.cover_photo %}
+            <img id="cover-preview" src="{{ user.profile.cover_photo.url }}" class="w-full h-48 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-lg" />
+          {% else %}
+            <div id="cover-preview" class="w-full h-48 rounded-xl border-4 border-white dark:border-gray-700 shadow-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
+              <span class="text-white font-bold text-2xl">No Cover Photo</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload New Cover Photo</label>
+          <input type="file" name="cover_photo" class="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white" accept="image/*" onchange="previewCover(this)" />
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">JPG, PNG or GIF. Recommended size: 1500x500px</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-4">
+        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg">
+          <i class='bx bx-save mr-2'></i>Save Cover Photo
+        </button>
+        <a href="{% url 'profiles:detail' request.user.username %}" class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-center">
+          <i class='bx bx-x mr-2'></i>Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function previewCover(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('cover-preview');
+        preview.innerHTML = `<img src="${e.target.result}" class="w-full h-48 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-lg" />`;
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+{% endblock %}

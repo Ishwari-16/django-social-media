@@ -3,6 +3,7 @@
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
+from django.utils import timezone
 
 
 class Migration(migrations.Migration):
@@ -16,17 +17,28 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='follower',
             name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=1),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                default=timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='follower',
             name='followed',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers_set', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='followers_set',
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
             model_name='follower',
             name='follower',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following_set', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='following_set',
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.db.models import Q
 
 from feed.models import Post
 from followers.models import Follower
@@ -38,7 +39,7 @@ class EditProfileView(View):
 
         # For image upload
         if 'profile_image' in request.FILES:
-            user.profile.image = request.FILES['profile_image']
+            user.profile.profile_image = request.FILES['profile_image']
             user.profile.save()
 
         user.save()
@@ -55,7 +56,19 @@ class EditProfileImageView(LoginRequiredMixin, View):
 
     def post(self, request):
         profile = request.user.profile
-        profile.image = request.FILES.get('image')
+        profile.profile_image = request.FILES.get('image')
+        profile.save()
+        return redirect('profiles:detail', username=request.user.username)
+
+
+# ✅ Edit Cover Photo View
+class EditCoverPhotoView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'profiles/edit_cover.html')
+
+    def post(self, request):
+        profile = request.user.profile
+        profile.cover_photo = request.FILES.get('cover_photo')
         profile.save()
         return redirect('profiles:detail', username=request.user.username)
 
@@ -106,3 +119,29 @@ class FollowView(LoginRequiredMixin, View):
             wording = "Follow"
 
         return JsonResponse({'success': True, 'wording': wording})
+
+# ✅ Search View
+def search(request):
+    query = request.GET.get('q', '')
+    
+    users = []
+    posts = []
+    
+    if query:
+        # Search users by username, first name, last name
+        users = User.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        ).distinct()
+        
+        # Search posts by content
+        posts = Post.objects.filter(
+            Q(text__icontains=query)
+        ).order_by('-id')[:20]
+    
+    return render(request, 'profiles/search_results.html', {
+        'query': query,
+        'users': users,
+        'posts': posts,
+    })

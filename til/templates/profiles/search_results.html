@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block body %}
+<div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
+    <h2 class="text-2xl font-bold text-white">Search Results</h2>
+    <p class="text-blue-100 mt-1">
+      {% if query %}
+        Results for "{{ query }}"
+      {% else %}
+        Enter a search term
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="p-6">
+    {% if query %}
+      <!-- Users Section -->
+      {% if users %}
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Users</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for user in users %}
+              <a href="{% url 'profiles:detail' user.username %}" class="glass-card rounded-xl p-4 hover:shadow-lg transition-shadow duration-200">
+                <div class="flex items-center space-x-3">
+                  {% thumbnail user.profile.profile_image "50x50" crop="center" as im %}
+                    <img src="{{ im.url }}" class="w-12 h-12 rounded-full object-cover" alt="{{ user.username }}" />
+                  {% empty %}
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                      <span class="text-white font-semibold">{{ user.username|first|upper }}</span>
+                    </div>
+                  {% endthumbnail %}
+                  <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ user.username }}</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.first_name }} {{ user.last_name }}</p>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Posts Section -->
+      {% if posts %}
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Posts</h3>
+          <div class="space-y-4">
+            {% for post in posts %}
+              <div class="glass-card rounded-xl p-4 hover:shadow-lg transition-shadow duration-200">
+                <div class="flex items-start space-x-3">
+                  <a href="{% url 'profiles:detail' post.author.username %}" class="flex-shrink-0">
+                    {% thumbnail post.author.profile.profile_image "50x50" crop="center" as im %}
+                      <img class="w-10 h-10 rounded-full object-cover" src="{{ im.url }}" alt="{{ post.author.username }}" />
+                    {% empty %}
+                      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                        <span class="text-white font-semibold text-sm">{{ post.author.username|first|upper }}</span>
+                      </div>
+                    {% endthumbnail %}
+                  </a>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <a href="{% url 'profiles:detail' post.author.username %}" class="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        {{ post.author.username }}
+                      </a>
+                      <span class="text-xs text-gray-500 dark:text-gray-400">{{ post.date|date:"M j, Y, g:i A" }}</span>
+                    </div>
+                    <p class="mt-1 text-gray-700 dark:text-gray-300">{{ post.text }}</p>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if not users and not posts %}
+        <div class="text-center py-12">
+          <i class='bx bx-search text-6xl text-gray-300 dark:text-gray-600'></i>
+          <p class="text-gray-500 dark:text-gray-400 mt-4">No results found for "{{ query }}"</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="text-center py-12">
+        <i class='bx bx-search text-6xl text-gray-300 dark:text-gray-600'></i>
+        <p class="text-gray-500 dark:text-gray-400 mt-4">Enter a search term to find users or posts</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

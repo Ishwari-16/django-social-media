@@ -29,4 +29,4 @@ class ChangePasswordForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_image']  # or 'profile_image' if that's the field name in your model
+        fields = ['profile_image', 'cover_photo']
