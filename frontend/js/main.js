@@ -66,7 +66,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
     e.preventDefault();
 
     const $btn = $(this);
-    console.log("BUTTON CLICKED", $btn.attr("data-action"));
+
     $.ajax({
         type: "POST",
         url: $btn.data("url"),
@@ -77,17 +77,29 @@ $(document).on("click", ".js-toggle-modal", function(e){
 
         success: function(data){
 
-    if(data.wording === "Unfollow"){
-        $btn.attr("data-action", "unfollow");
-        $btn.find(".js-follow-text").html(
-            "<i class='bx bx-user-minus mr-2'></i> Unfollow"
-        );
-    } else {
-        $btn.attr("data-action", "follow");
-        $btn.find(".js-follow-text").html(
-            "<i class='bx bx-user-plus mr-2'></i> Follow"
-        );
-    }
-}
+            if(data.wording === "Unfollow"){
+
+                $btn.attr("data-action", "unfollow");
+
+                $btn.find(".js-follow-text").html(
+                    "<i class='bx bx-user-minus mr-2'></i>Unfollow"
+                );
+
+            } else {
+
+                $btn.attr("data-action", "follow");
+
+                $btn.find(".js-follow-text").html(
+                    "<i class='bx bx-user-plus mr-2'></i>Follow"
+                );
+            }
+
+            console.log("SUCCESS", data);
+            console.log("NEW ACTION =", $btn.attr("data-action"));
+        },
+
+        error: function(error){
+            console.log(error);
+        }
     });
-})
+});
