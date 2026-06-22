@@ -19,7 +19,7 @@ ENV/
 # *.sqlite3
 
 # Static and media files
-/static/
+
 
 # VS Code settings
 .vscode/
