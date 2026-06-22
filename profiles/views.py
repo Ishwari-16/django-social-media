@@ -110,6 +110,9 @@ class FollowView(LoginRequiredMixin, View):
             other_user = User.objects.get(username=data['username'])
         except User.DoesNotExist:
             return HttpResponseBadRequest("User not found")
+        
+        print("ACTION =", data['action'])
+        print("USER =", data['username'])
 
         if data['action'] == "follow":
             Follower.objects.get_or_create(followed_by=request.user, following=other_user)
