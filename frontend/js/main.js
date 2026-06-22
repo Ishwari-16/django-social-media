@@ -66,7 +66,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
     e.preventDefault();
 
     const $btn = $(this);
-
+    console.log("BUTTON CLICKED", $btn.attr("data-action"));
     $.ajax({
         type: "POST",
         url: $btn.data("url"),
