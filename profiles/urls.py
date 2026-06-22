@@ -16,12 +16,15 @@ app_name = 'profiles'
 
 urlpatterns = [
     path('', homepage, name='home'),
-    path('<str:username>/', ProfileDetailView.as_view(), name='detail'),
-    path('<str:username>/follow/', FollowView.as_view(), name='follow'),
+
+    path('search/', search, name='search'),
+
     path('edit/', EditProfileView.as_view(), name='edit'),
     path('edit/image/', EditProfileImageView.as_view(), name='edit_image'),
     path('edit/cover/', EditCoverPhotoView.as_view(), name='edit_cover'),
     path('edit-name-username/', edit_name_username, name='edit_name_username'),
-    path('search/', search, name='search'),
- 
+
+    path('<str:username>/follow/', FollowView.as_view(), name='follow'),
+
+    path('<str:username>/', ProfileDetailView.as_view(), name='detail'),
 ]
