@@ -20,7 +20,7 @@ ENV/
 
 # Static and media files
 #static/
-#media/
+# media/
 
 # VS Code settings
 .vscode/

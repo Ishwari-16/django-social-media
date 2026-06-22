@@ -195,3 +195,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CSRF_TRUSTED_ORIGINS = [
     'https://django-social-media-rbbk.onrender.com',
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+THUMBNAIL_DEBUG = True
