@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import SendMessageView
 
 app_name = "messaging"
 
@@ -27,6 +28,8 @@ urlpatterns = [
         views.delete_message,
         name="delete_message"
     ),
+     path('<int:conversation_id>/send/', SendMessageView.as_view(), name='send'),
+     
 ]
 
 
