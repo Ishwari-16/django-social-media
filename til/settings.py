@@ -27,9 +27,9 @@ SECRET_KEY = 'django-insecure-(i&3^wpnq&mu0b(+6d0!82vcg%&*3$!(*=ckg4v%%#hvz%$$5s
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    ".vercel.app",
-    "localhost",
-    "127.0.0.1"
+    'django-social-media-rbbk.onrender.com',
+    'localhost',
+    '127.0.0.1',
 ]
 
 # Application definition
@@ -192,3 +192,6 @@ ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_USERNAME_MIN_LENGTH = 2
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+CSRF_TRUSTED_ORIGINS = [
+    'https://django-social-media-rbbk.onrender.com',
+]
