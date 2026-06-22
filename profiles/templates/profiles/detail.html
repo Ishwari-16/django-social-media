@@ -48,10 +48,12 @@
       {% if request.user.is_authenticated %}
         {% if request.user != user %}
           <div class="mt-4 sm:mt-0 flex space-x-2">
-            <button class="js-follow bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center" 
-                    data-username="{{ user.username }}" 
-                   data-action="{% if you_follow %}unfollow{% else %}follow{% endif %}"
-                    type="button">
+            <button
+              class="js-follow bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+              data-username="{{ user.username }}"
+              data-action="{% if you_follow %}unfollow{% else %}follow{% endif %}"
+              data-url="{% url 'profiles:follow' user.username %}"
+              type="button">
               <span class="js-follow-text">
                 {% if you_follow %}
                   <i class='bx bx-user-minus mr-2'></i>Unfollow
