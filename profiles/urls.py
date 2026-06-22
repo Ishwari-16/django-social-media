@@ -23,4 +23,9 @@ urlpatterns = [
     path('edit/cover/', EditCoverPhotoView.as_view(), name='edit_cover'),
     path('edit-name-username/', edit_name_username, name='edit_name_username'),
     path('search/', search, name='search'),
+    path(
+    "<slug:username>/follow/",
+    FollowView.as_view(),
+    name="follow",
+),
 ]
