@@ -1,4 +1,5 @@
 console.log("MAIN JS LOADED");
+alert("MAIN JS LOADED");
 $.ajaxSetup({
       beforeSend: function beforeSend(xhr, settings) {
           function getCookie(name) {
