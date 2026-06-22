@@ -62,7 +62,7 @@ $(document).on("click", ".js-toggle-modal", function(e){
     });
 })
 success:(data) => {
-    $btn.find(".js-follow-text").text(data.wording);
+    $btn.find(".js-follow-text").text(data.wording)
 
     if(action == "follow") {
         $btn.attr("data-action", "unfollow");
