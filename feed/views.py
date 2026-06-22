@@ -27,9 +27,7 @@ class HomePage(TemplateView):
 
                   following.append(self.request.user.id)
 
-                  posts = Post.objects.filter(
-                        author__in=following
-                  ).order_by('-id')[:60]
+                  posts = Post.objects.all().order_by('-id')[:60]
             else:
                   posts = Post.objects.all().order_by('-id')[:30]
 
