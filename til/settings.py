@@ -24,7 +24,7 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-(i&3^wpnq&mu0b(+6d0!82vcg%&*3$!(*=ckg4v%%#hvz%$$5s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = true
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'django-social-media-rbbk.onrender.com',
