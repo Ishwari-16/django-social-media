@@ -62,38 +62,38 @@ $(document).on("click", ".js-toggle-modal", function(e){
         }
     });
 })
-$(document).on("click", ".js-follow", function(e){
+.on("click", ".js-follow", function(e){
     e.preventDefault();
 
-    const btn = $(this);
-
-    console.log("BUTTON CLICKED");
+    const $btn = $(this);
 
     $.ajax({
         type: "POST",
-        url: btn.data("url"),
+        url: $btn.data("url"),
         data: {
-            username: btn.data("username"),
-            action: btn.data("action"),
-            csrfmiddlewaretoken: document.querySelector('[name=csrfmiddlewaretoken]')?.value
+            action: $btn.attr("data-action"),
+            username: $btn.data("username"),
         },
 
         success: function(data){
-            console.log("SUCCESS", data);
 
-            btn.find(".js-follow-text").text(data.wording);
-
-            if(btn.attr("data-action") === "follow"){
-                btn.attr("data-action","unfollow");
-            }else{
-                btn.attr("data-action","follow");
+            if(data.wording === "Unfollow"){
+                $btn.attr("data-action", "unfollow");
+                $btn.find(".js-follow-text").html(
+                    "<i class='bx bx-user-minus mr-2'></i>Unfollow"
+                );
+            } else {
+                $btn.attr("data-action", "follow");
+                $btn.find(".js-follow-text").html(
+                    "<i class='bx bx-user-plus mr-2'></i>Follow"
+                );
             }
+
+            console.log("SUCCESS", data);
         },
 
-        error: function(xhr){
-            console.log("ERROR");
-            console.log(xhr.status);
-            console.log(xhr.responseText);
+        error: function(error){
+            console.log(error);
         }
     });
-});
+})
