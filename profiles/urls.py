@@ -16,7 +16,7 @@ app_name = 'profiles'
 
 urlpatterns = [
     path('', homepage, name='home'),
-    path('profile/<str:username>/', ProfileDetailView.as_view(), name='detail'),
+    path('<str:username>/', ProfileDetailView.as_view(), name='detail'),
     path('<str:username>/follow/', FollowView.as_view(), name='follow'),
     path('edit/', EditProfileView.as_view(), name='edit'),
     path('edit/image/', EditProfileImageView.as_view(), name='edit_image'),
