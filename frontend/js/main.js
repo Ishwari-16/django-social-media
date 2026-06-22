@@ -77,30 +77,17 @@ $(document).on("click", ".js-toggle-modal", function(e){
 
         success: function(data){
 
-    console.log("SUCCESS", data);
-
     if(data.wording === "Unfollow"){
-
         $btn.attr("data-action", "unfollow");
-
         $btn.find(".js-follow-text").html(
             "<i class='bx bx-user-minus mr-2'></i> Unfollow"
         );
-
     } else {
-
         $btn.attr("data-action", "follow");
-
         $btn.find(".js-follow-text").html(
             "<i class='bx bx-user-plus mr-2'></i> Follow"
         );
     }
-
-    console.log("NEW ACTION =", $btn.attr("data-action"));
-},
-
-        error: function(error){
-            console.log(error);
-        }
+}
     });
 })
