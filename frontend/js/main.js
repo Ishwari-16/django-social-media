@@ -61,12 +61,30 @@ $(document).on("click", ".js-toggle-modal", function(e){
         }
     });
 })
-success:(data) => {
-    $btn.find(".js-follow-text").text(data.wording);
+.on("click", ".js-follow", function(e){
+    e.preventDefault();
 
-    if(action == "follow") {
-        $btn.attr("data-action", "unfollow");
-    } else {
-        $btn.attr("data-action", "follow");
-    }
-}
+    const $btn = $(this);
+    const action = $btn.attr("data-action");
+
+    $.ajax({
+        type:'POST',
+        url:$btn.data("url"),
+        data:{
+            action:action,
+            username:$btn.data("username"),
+        },
+        success:(data) => {
+            $btn.find(".js-follow-text").text(data.wording);
+
+            if(action === "follow"){
+                $btn.attr("data-action","unfollow");
+            } else {
+                $btn.attr("data-action","follow");
+            }
+        },
+        error:(error) => {
+            console.warn(error);
+        }
+    });
+})
