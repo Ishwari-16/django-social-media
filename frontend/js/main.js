@@ -1,5 +1,4 @@
-console.log("MAIN JS LOADED");
-alert("MAIN JS LOADED");
+
 $.ajaxSetup({
       beforeSend: function beforeSend(xhr, settings) {
           function getCookie(name) {
@@ -29,7 +28,6 @@ $.ajaxSetup({
     },
 });      
 
-console.log("MAIN JS LOADED");
 $(document).on("click", ".js-toggle-modal", function(e){
       e.preventDefault();
       $("#post-modal").toggleClass("hidden");
