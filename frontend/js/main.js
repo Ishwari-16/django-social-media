@@ -79,13 +79,11 @@ $(document).on("click", ".js-toggle-modal", function(e){
 
     console.log("SUCCESS", data);
 
-    const $text = $btn.find(".js-follow-text");
-
-    if (data.wording === "Unfollow") {
+    if(data.wording === "Unfollow"){
 
         $btn.attr("data-action", "unfollow");
 
-        $text.html(
+        $btn.find(".js-follow-text").html(
             "<i class='bx bx-user-minus mr-2'></i> Unfollow"
         );
 
@@ -93,12 +91,12 @@ $(document).on("click", ".js-toggle-modal", function(e){
 
         $btn.attr("data-action", "follow");
 
-        $text.html(
+        $btn.find(".js-follow-text").html(
             "<i class='bx bx-user-plus mr-2'></i> Follow"
         );
     }
 
-    console.log("NEW ACTION:", $btn.attr("data-action"));
+    console.log("NEW ACTION =", $btn.attr("data-action"));
 },
 
         error: function(error){
