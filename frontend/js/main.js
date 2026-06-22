@@ -63,32 +63,38 @@ $(document).on("click", ".js-toggle-modal", function(e){
         }
     });
 })
-.on("click", ".js-follow", function(e){
+$(document).on("click", ".js-follow", function(e){
     e.preventDefault();
 
-    console.log("FOLLOW BUTTON CLICKED");
+    const btn = $(this);
 
-    const $btn = $(this);
-    const action = $btn.attr("data-action");
+    console.log("BUTTON CLICKED");
 
     $.ajax({
-        type:'POST',
-        url:$btn.data("url"),
-        data:{
-            action:action,
-            username:$btn.data("username"),
+        type: "POST",
+        url: btn.data("url"),
+        data: {
+            username: btn.data("username"),
+            action: btn.data("action"),
+            csrfmiddlewaretoken: document.querySelector('[name=csrfmiddlewaretoken]')?.value
         },
-        success:(data) => {
-            $btn.find(".js-follow-text").text(data.wording);
 
-            if(action === "follow"){
-                $btn.attr("data-action","unfollow");
-            } else {
-                $btn.attr("data-action","follow");
+        success: function(data){
+            console.log("SUCCESS", data);
+
+            btn.find(".js-follow-text").text(data.wording);
+
+            if(btn.attr("data-action") === "follow"){
+                btn.attr("data-action","unfollow");
+            }else{
+                btn.attr("data-action","follow");
             }
         },
-        error:(error) => {
-            console.warn(error);
+
+        error: function(xhr){
+            console.log("ERROR");
+            console.log(xhr.status);
+            console.log(xhr.responseText);
         }
     });
-})
+});
