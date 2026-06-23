@@ -80,7 +80,7 @@
         </div>
 
         <!-- Search Bar (Desktop) -->
-        <div class="hidden md:flex flex-1 max-w-md mx-8">
+        <div class="block md:flex flex-1 max-w-md mx-2 md:mx-8">
           <form action="{% url 'profiles:search' %}" method="GET" class="relative w-full">
             <input type="text" 
                    name="q"
@@ -202,6 +202,14 @@
 
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+      <form action="{% url 'profiles:search' %}" method="GET" class="px-4 py-3">
+    <input
+        type="text"
+        name="q"
+        placeholder="Search users..."
+        class="w-full border rounded-lg px-4 py-2"
+    >
+</form>
       <div class="px-4 py-3 space-y-2">
         <a href="/" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
           <i class='bx bx-home text-xl mr-3'></i> Home
@@ -301,7 +309,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="flex-1 lg:ml-72 p-4 md:p-8">
+    <main class="flex-1 p-2 md:p-4 lg:ml-72 lg:p-8">
       <div class="max-w-2xl mx-auto">
         {% block body %}
           {% block content %}{% endblock %}
