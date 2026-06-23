@@ -1178,3 +1178,28 @@ a.deletelink:focus, a.deletelink:hover {
     color: var(--body-fg);
     background-color: var(--body-bg);
 }
+
+/* existing css */
+
+@media screen and (max-width:768px){
+
+    .chat-container{
+        width:100%;
+        padding:10px;
+    }
+
+    .message{
+        max-width:85%;
+        word-break:break-word;
+    }
+
+    .chat-input{
+        display:flex;
+        gap:5px;
+    }
+
+    .chat-input input{
+        width:100%;
+    }
+
+}
