@@ -15,7 +15,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Conversation, Message
 
 from django.http import JsonResponse
-
 @login_required
 def get_messages(request, conversation_id):
 
@@ -38,7 +37,7 @@ def get_messages(request, conversation_id):
         })
 
     return JsonResponse(messages, safe=False)
-    
+
 @login_required
 def chat_view(request, conversation_id):
 
