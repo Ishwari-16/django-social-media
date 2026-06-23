@@ -14,7 +14,31 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Conversation, Message
 
+from django.http import JsonResponse
 
+@login_required
+def get_messages(request, conversation_id):
+
+    conversation = get_object_or_404(
+        Conversation,
+        id=conversation_id
+    )
+
+    messages = []
+
+    for msg in conversation.messages.all():
+
+        messages.append({
+            "id": msg.id,
+            "content": msg.content,
+            "sender": msg.sender.username,
+            "is_me": msg.sender == request.user,
+            "is_read": msg.is_read,
+            "time": msg.timestamp.strftime("%I:%M %p")
+        })
+
+    return JsonResponse(messages, safe=False)
+    
 @login_required
 def chat_view(request, conversation_id):
 

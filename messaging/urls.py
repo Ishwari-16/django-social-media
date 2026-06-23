@@ -33,7 +33,11 @@ urlpatterns = [
     views.SendMessageView.as_view(),
     name='send'
 ),
-     
+ path(
+    "messages/<int:conversation_id>/",
+    views.get_messages,
+    name="get_messages"
+),    
 ]
 
 
